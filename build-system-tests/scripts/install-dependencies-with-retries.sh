@@ -20,10 +20,12 @@ install_dependencies_with_retries() {
             set -e
             break
         fi
+        # Add increasing delay between failed attempts of 10s/20s
+        local wait=$((10 * attempt))
         attempt=$((attempt + 1))
         if [ $attempt -le $retries ]; then
-            echo "$1 install failed. Retrying in 5 seconds..."
-            sleep 5
+            echo "$1 install failed. Retrying in $wait seconds..."
+            sleep $wait
         else
             echo "$1 install failed after $retries attempts."
             echo "Re-enable exit-on-error"
