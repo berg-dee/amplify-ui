@@ -32,10 +32,14 @@ for i in {1..3}; do
   # Check return value and exit early if successful
   return_value=$?
   [ $return_value -eq 0 ] && break
-  echo "[ERROR]: yarn install failed with exit code $return_value, waiting to retry..."
 
-  # Sleep 5 seconds before retrying
-  sleep 5
+  if [ "$i" -le 3 ]; then
+    # when publishing to NPM, there may be a delay before the published tag appears, causing failed installs
+    # initial script used flat 5s between reruns, which is too fast
+    # add increasing delay between retries: 15s/30s
+    echo "[ERROR]: yarn install failed with exit code $return_value, waiting to retry in $((15 * i)) seconds..."
+    sleep $((15 * i))
+  fi
 done
 
 # exit 0 if last `yarn install` was successful, non-zero otherwise
