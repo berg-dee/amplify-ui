@@ -17,9 +17,9 @@ if [ "$SKIP_CYPRESS_BINARY" = "true" ]; then
   export CYPRESS_INSTALL_BINARY=0
 fi
 
-for i in {1..3}; do
+for i in {1..4}; do
   echo "===================="
-  echo "Attempt $i out of 3:"
+  echo "Attempt $i out of 4:"
   echo "===================="
 
   if [ "$NO_LOCKFILE" = "true" ]; then
@@ -33,12 +33,13 @@ for i in {1..3}; do
   return_value=$?
   [ $return_value -eq 0 ] && break
 
+  # Don't add delay at end of last attempt if last attempt fails
   if [ "$i" -le 3 ]; then
-    # when publishing to NPM, there may be a delay before the published tag appears, causing failed installs
-    # initial script used flat 5s between reruns, which is too fast
-    # add increasing delay between retries: 15s/30s
-    echo "[ERROR]: yarn install failed with exit code $return_value, waiting to retry in $((15 * i)) seconds..."
-    sleep $((15 * i))
+    # Potential delay when publishing to NPM before tag appears, causing failed installs
+    # Add exponential backoff delay between retries
+    # 4s/16s/64s close to [5s/15s/60s]
+    echo "[ERROR]: yarn install failed with exit code $return_value, waiting to retry in $((4 * i)) seconds..."
+    sleep $((4 ** i))
   fi
 done
 

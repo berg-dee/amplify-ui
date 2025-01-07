@@ -4,7 +4,7 @@
 # Takes 2 parameters: the package manager and the dependencies to be installed
 # Usage:  install_with_retries npm "$DEPENDENCIES" or  install_with_retries yarn "$DEPENDENCIES"
 install_dependencies_with_retries() {
-    local retries=3
+    local retries=4
     local attempt=1
     echo "Disable exit-on-error temporarily"
     echo "set +e"
@@ -20,8 +20,8 @@ install_dependencies_with_retries() {
             set -e
             break
         fi
-        # Add increasing delay between failed attempts of 15s/30s
-        local wait=$((15 * attempt))
+        # Add increasing delay between failed attempts of 4s/16s/64s
+        local wait=$((4 ** attempt))
         attempt=$((attempt + 1))
         if [ $attempt -le $retries ]; then
             echo "$1 install failed. Retrying in $wait seconds..."

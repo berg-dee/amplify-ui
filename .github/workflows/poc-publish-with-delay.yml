@@ -1,5 +1,4 @@
-# Description: This workflow runs unit + e2e tests, then publishes UI packages
-#              to `@next` NPM tag.
+# Description: Test publish/next workflow with separate tag + install with delays
 #
 # Triggered by: push to `poc-ci-fix`
 
@@ -56,17 +55,12 @@ jobs:
       DOCSEARCH_DOCS_API_KEY: ${{ secrets.DOCSEARCH_DOCS_API_KEY }}
       DOCSEARCH_DOCS_INDEX_NAME: ${{ secrets.DOCSEARCH_DOCS_INDEX_NAME }}
 
-  # publish:
-  #   uses: aws-amplify/amplify-ui/.github/workflows/reusable-tagged-publish.yml@main
-  #   with:
-  #     dist-tag: next
-  #   secrets:
-  #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   publish:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fake Publish
-        run: echo "Fake publish to next"
+    uses: aws-amplify/amplify-ui/.github/workflows/reusable-tagged-publish.yml@main
+    with:
+      dist-tag: test-delay
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # deploy-sample-app:
   #   runs-on: ubuntu-latest
@@ -82,7 +76,7 @@ jobs:
     uses: ./.github/workflows/reusable-build-system-test.yml
     needs: publish
     with:
-      dist-tag: next
+      dist-tag: test-delay
     secrets:
       AUTH_E2E_ROLE_ARN: ${{ secrets.AUTH_E2E_ROLE_ARN }}
       DOMAIN: ${{ secrets.DOMAIN }}
@@ -95,4 +89,4 @@ jobs:
     uses: ./.github/workflows/reusable-build-system-test-react-native.yml
     needs: publish
     with:
-      dist-tag: next
+      dist-tag: test-delay
