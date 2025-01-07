@@ -58,7 +58,7 @@ jobs:
   publish:
     uses: aws-amplify/amplify-ui/.github/workflows/reusable-tagged-publish.yml@main
     with:
-      dist-tag: test-delay
+      dist-tag: testdelay
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -76,7 +76,7 @@ jobs:
     uses: ./.github/workflows/reusable-build-system-test.yml
     needs: publish
     with:
-      dist-tag: test-delay
+      dist-tag: testdelay
     secrets:
       AUTH_E2E_ROLE_ARN: ${{ secrets.AUTH_E2E_ROLE_ARN }}
       DOMAIN: ${{ secrets.DOMAIN }}
@@ -89,4 +89,4 @@ jobs:
     uses: ./.github/workflows/reusable-build-system-test-react-native.yml
     needs: publish
     with:
-      dist-tag: test-delay
+      dist-tag: testdelay
